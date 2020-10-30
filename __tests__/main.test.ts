@@ -17,7 +17,7 @@ function generateIssue(
   labels: string[] = [],
   isClosed: boolean = false,
   isLocked: boolean = false,
-  createdAt ?: string
+  createdAt: string = ""
 ): Issue {
   return {
     number: id,
@@ -41,6 +41,7 @@ const DefaultProcessorOptions: IssueProcessorOptions = Object.freeze({
   closePrMessage: 'This PR is being closed',
   daysBeforeStale: 1,
   daysBeforeClose: 30,
+  dateField: "updated_at",
   staleIssueLabel: 'Stale',
   closeIssueLabel: '',
   exemptIssueLabels: '',
@@ -681,7 +682,7 @@ test('stale issues should not be closed until after the closed number of days', 
   expect(processor.staleIssues.length).toEqual(1);
 });
 
-test('issues should be marked stale if days-since-created-before-stale is specified', async () => {
+test('issues should be marked stale if dateField is set to created_at', async () => {
   let lastUpdate = new Date();
   let creationDate = new Date();
   creationDate.setDate(creationDate.getDate() - 5);
@@ -699,7 +700,7 @@ test('issues should be marked stale if days-since-created-before-stale is specif
   ];
 
   const opts = {...DefaultProcessorOptions};
-  opts.daysSinceCreatedBeforeStale = 5; // stale 5 days since creation
+  opts.dateField = "created_at"; // stale 5 days since creation
 
   const processor = new IssueProcessor(
     opts,

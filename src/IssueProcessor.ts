@@ -40,7 +40,7 @@ export interface IssueProcessorOptions {
   closePrMessage: string;
   daysBeforeStale: number;
   daysBeforeClose: number;
-  daysSinceCreatedBeforeStale?: number;
+  dateField: string;
   staleIssueLabel: string;
   closeIssueLabel: string;
   exemptIssueLabels: string;
@@ -169,19 +169,22 @@ export class IssueProcessor {
       // does this issue have a stale label?
       let isStale = IssueProcessor.isLabeled(issue, staleLabel);
 
+      let timestamp = "";
+      switch (this.options.dateField) {
+        case "updated_at":
+          timestamp = issue.updated_at;
+          break;
+        case "created_at":
+          timestamp = issue.created_at;
+          break;
+      }
+
+
       // should this issue be marked stale?
-      const shouldBeStale = !IssueProcessor.timestampSince(
-          issue.updated_at,
-          this.options.daysBeforeStale
-        ) 
-        ||
-        (
-          this.options.daysSinceCreatedBeforeStale &&
-          !IssueProcessor.timestampSince(
-            issue.created_at,
-            this.options.daysSinceCreatedBeforeStale
-          )
-        );
+      const shouldBeStale = timestamp != "" && !IssueProcessor.timestampSince(
+        timestamp,
+        this.options.daysBeforeStale
+      );
 
       // determine if this issue needs to be marked stale first
       if (!isStale && shouldBeStale && shouldMarkWhenStale) {
