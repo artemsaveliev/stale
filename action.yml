@@ -1,6 +1,6 @@
 name: 'Close Stale Issues'
 description: 'Close issues and pull requests with no recent activity'
-author: 'GitHub'
+author: 'artemsaveliev'
 inputs:
   repo-token:
     description: 'Token for the repository. Can be passed in using `{{ secrets.GITHUB_TOKEN }}`.'
@@ -19,6 +19,8 @@ inputs:
   days-before-close:
     description: 'The number of days to wait to close an issue or pull request after it being marked stale. Set to -1 to never close stale issues.'
     default: 7
+  days-since-created-before-stale:
+    description: 'Number of days since creation before marking an issue/pr as stale.'
   stale-issue-label:
     description: 'The label to apply when an issue is stale.'
     default: 'Stale'
